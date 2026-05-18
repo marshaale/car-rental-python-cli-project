@@ -1,0 +1,5 @@
+from pathlib import Path
+
+ROOT = Path(__file__).parent.parent
+DATA_PATH = f"{ROOT}/data"
+CARS_FILE_PATH = f"{DATA_PATH}/cars.txt"
