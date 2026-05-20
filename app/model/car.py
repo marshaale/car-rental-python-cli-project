@@ -10,4 +10,4 @@ class Car:
     is_rented:bool
 
     def __str__(self):
-        return f"Name: {self.name}\nModel: {self.model}\nYear: {self.year}\nAvailable: {"No" if self.is_rented else "Yes"}\nDaily Price: ${self.price_per_day}"
+        return f"ID: {self.id}\nName: {self.name}\nModel: {self.model}\nYear: {self.year}\nAvailable: {"No" if self.is_rented else "Yes"}\nDaily Price: ${self.price_per_day}"

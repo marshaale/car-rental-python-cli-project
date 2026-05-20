@@ -122,3 +122,7 @@ class CarService:
         except Exception as e:
             print(str(e))
             return False
+    
+    def list_cars(self)->None:
+        for car in self.cars:
+            print(car,"\n")
