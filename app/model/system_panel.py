@@ -10,3 +10,8 @@ class SystemPanel:
         self.customer_service.load_customers()
         self.car_rent_service = CustomerCarRentService()
         self.car_rent_service.load_rent_cars()
+    
+    def save_state(self)-> None:
+        self.car_service.save_cars()
+        self.customer_service.save_customers()
+        self.car_rent_service.save_rent_cars()
