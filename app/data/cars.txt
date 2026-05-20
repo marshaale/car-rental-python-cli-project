@@ -1,2 +1,1 @@
 id,name,model,year,price_per_day,is_rented
-1,Honda,H245,2026,22,False

@@ -1,43 +1,49 @@
-from model.car import Car
 from model.system_panel import SystemPanel
-from model.customer import Customer
-
-system = SystemPanel()
-# car = Car(name="Honda",model="H242",year="2026",is_rented=False,id=1,price_per_day=19)
-# print(system.car_service.cars)
-# print(system.car_service.find_car(1))
-# print(system.car_service.update_car(car_id=1,name="Honda",model="H245",year="2026",is_rented=False,price_per_day=22))
-# print(system.car_service.cars)
-# print(system.car_service.save_cars())
-# print(system.car_service.remove_car(2))
-# print(system.car_service.cars)
-# print(system.car_service.save_cars())
 
 
-customer = Customer(id=1,name="Osman",phone="2368102",identity="National Identity")
+def print_message(message: str = "---Back to System Panel---"):
+    print(message, "\n")
 
-# system.customer_service.add_customer(name="Osman",phone="2368102",identity="National Identity")
-# system.customer_service.add_customer(name="Ahmed",phone="760284",identity="Passport")
 
-# print(system.customer_service.customers)
+def cars_option(system: SystemPanel):
+    while True:
+        prefix = "Cars->"
+        print("1 Add 2 List 3 Update 4 Remove 0 Exit")
+        user_pick = input("Pick: ").strip().lower()
+        if user_pick == "2":
+            print_message(f"----{prefix}List----")
+            system.car_service.list_cars()
+        if user_pick == "4":
+            print_message(f"----{prefix}Remove----")
+            car_id = int(input("Car id to remove: ").strip())
+            if system.car_service.remove_car(car_id):
+                print_message("Car removed successfully")
+            else:
+                print_message(f"Car with id: {car_id} does not not found")
 
-# print(system.customer_service.find_customer(1))
+        if user_pick == "0":
+            system.car_service.save_cars()
+            print_message()
+            break
 
-# print(system.customer_service.remove_customer(1))
 
-# print(system.customer_service.update_customer(customer_id=2,identity="Document"))
+def main():
+    system = SystemPanel()
+    while True:
+        try:
+            print("1 Cars 2 Customers 3 Rents 101: Save 0 Exit")
+            user_pick = input("Pick: ").strip().lower()
+            if user_pick == "1":
+                cars_option(system)
+            if user_pick == "0":
+                print_message("Good bye")
+                break
+        except Exception as e:
+            print("System exception: ", str(e))
+        finally:
+            # system.save_state()
+            pass
 
-# print(system.customer_service.save_customers())
 
-# print(system.customer_service.customers)
-
-system.car_rent_service.add_car_rent(car_id=1,customer_id=2,num_of_days=15,base_price=21,payment_type="Pre Payment")
-system.car_service.update_car(car_id=1,is_rented=True)
-system.car_rent_service.save_rent_cars()
-print(system.car_rent_service.customer_car_rents)
-print(system.car_rent_service.find_rent_car(1))
-system.car_service.update_car(car_id=1,is_rented=False)
-system.car_rent_service.update_rent_car(customer_car_rent_id=1,status="return_due_to_issue")
-print(system.car_rent_service.customer_car_rents)
-print(system.car_rent_service.remove_rent_car(2))
-system.car_rent_service.save_rent_cars()
+if __name__ == "__main__":
+    main()
