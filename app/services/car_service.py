@@ -88,21 +88,23 @@ class CarService:
         self,
         *,
         car_id: int,
-        name: str,
-        model: str,
-        year: str,
-        price_per_day: float,
-        is_rented: bool,
+        name: str | None = None,
+        model: str | None = None,
+        year: str | None = None,
+        price_per_day: float | None = None,
+        is_rented: bool | None = None,
     ) -> bool:
         try:
             car = self.find_car(car_id)
             if not car:
                 return False
-            car.name = name
-            car.model = model
-            car.year = year
-            car.price_per_day = price_per_day
-            car.is_rented = is_rented
+            car.name = car.name if not name else name.strip()
+            car.model = car.model if not model else model.strip()
+            car.year = car.year if not year else year.strip()
+            car.price_per_day = (
+                car.price_per_day if not price_per_day else float(price_per_day)
+            )
+            car.is_rented = car.is_rented if not is_rented else is_rented
             return True
         except Exception as e:
             print(str(e))
