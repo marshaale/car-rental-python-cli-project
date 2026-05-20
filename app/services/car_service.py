@@ -1,13 +1,13 @@
 from model.car import Car
 from core.config import CARS_FILE_PATH
-from utils.utils import is_header_line
+from utils.utils import is_header_line, convert_str_to_bool
 
 
 class CarService:
     def __init__(self) -> None:
         self.cars_file_header = f"id,name,model,year,price_per_day,is_rented"
         self.encoding = "utf-8"
-        self.cars = []
+        self.cars: list[Car] = []
 
     def load_cars(self) -> list[Car]:
         try:
@@ -27,6 +27,7 @@ class CarService:
                         continue
 
                     [id, name, model, year, price_per_day, is_rented] = raw.split(",")
+                    print("Is car rented", convert_str_to_bool(is_rented.strip()))
                     cars.append(
                         Car(
                             id=int(id),
@@ -34,7 +35,7 @@ class CarService:
                             model=model,
                             year=year,
                             price_per_day=float(price_per_day),
-                            is_rented=bool(is_rented),
+                            is_rented=convert_str_to_bool(is_rented),
                         )
                     )
             self.cars = cars
@@ -122,7 +123,7 @@ class CarService:
         except Exception as e:
             print(str(e))
             return False
-    
-    def list_cars(self)->None:
+
+    def list_cars(self) -> None:
         for car in self.cars:
-            print(car,"\n")
+            print(car, "\n")
