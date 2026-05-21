@@ -6,8 +6,8 @@ def print_message(message: str = "---Back to System Panel---"):
 
 
 def cars_option(system: SystemPanel):
+    prefix = "Cars->"
     while True:
-        prefix = "Cars->"
         print("1 Add 2 List 3 Update 4 Remove 0 Exit")
         user_pick = input("Pick: ").strip().lower()
         if user_pick == "1":
@@ -63,6 +63,13 @@ def cars_option(system: SystemPanel):
             print_message()
             break
 
+def customers_option(system:SystemPanel):
+    prefix = "Customers->"
+    while True:
+        print("1 Add 2 List 3 Update 4 Remove 0 Exit")
+        pass
+
+
 
 def main():
     system = SystemPanel()
@@ -72,6 +79,13 @@ def main():
             user_pick = input("Pick: ").strip().lower()
             if user_pick == "1":
                 cars_option(system)
+            
+            if user_pick == "2":
+                customers_option(system)
+
+            if user_pick == "101":
+                system.save_state()
+                
             if user_pick == "0":
                 print_message("Good bye")
                 break
