@@ -5,6 +5,18 @@ def print_message(message: str = "---Back to System Panel---"):
     print(message, "\n")
 
 
+def validate_id_value(id_value: str, prefix: str = "Customer") -> bool:
+    if not id_value:
+        print(f"{prefix} id is required")
+        return False
+
+    if not id_value.isnumeric():
+        print(f"{prefix} id must be numeric")
+        return False
+
+    return True
+
+
 def cars_option(system: SystemPanel):
     prefix = "Cars->"
     while True:
@@ -26,22 +38,24 @@ def cars_option(system: SystemPanel):
                 year=car_year,
                 price_per_day=float(car_price_per_day),
             )
+
         if user_pick == "2":
             print_message(f"----{prefix}List----")
             system.car_service.list_cars()
 
         if user_pick == "3":
             print_message(f"----{prefix}Update----")
-            print("Hint: Leave blank to skip updating a field")
             car_id = input("Car id: ").strip()
+            if not validate_id_value(car_id, "Car"):
+                continue
+
+            print("Hint: Leave blank to skip updating a field")
             car_name = input("Car name: ").strip()
             car_model = input("Car model: ").strip()
             car_year = input("Car year: ").strip()
             car_price_per_day = input("Car price per day: ").strip()
-            if not car_id:
-                print_message("Car id is required")
-                continue
-            system.car_service.update_car(
+
+            if system.car_service.update_car(
                 car_id=int(car_id),
                 name=car_name,
                 model=car_model,
@@ -49,35 +63,27 @@ def cars_option(system: SystemPanel):
                 price_per_day=(
                     None if not car_price_per_day else float(car_price_per_day)
                 ),
-            )
+            ):
+                print_message("Car updated successfully")
+            else:
+                print_message(f"Car with id: {car_id} does not found")
 
         if user_pick == "4":
             print_message(f"----{prefix}Remove----")
-            car_id = int(input("Car id to remove: ").strip())
-            if system.car_service.remove_car(car_id):
+            car_id = input("Car id to remove: ").strip()
+
+            if not validate_id_value(car_id, "Car"):
+                continue
+
+            if system.car_service.remove_car(int(car_id)):
                 print_message("Car removed successfully")
             else:
-                print_message(f"Car with id: {car_id} does not not found")
+                print_message(f"Car with id: {car_id} does not found")
 
         if user_pick == "0":
             system.car_service.save_cars()
             print_message()
             break
-
-
-def validate_and_find_customer(system: SystemPanel, customer_id: str) -> bool:
-    if not customer_id:
-        print("Customer id is required")
-        return False
-
-    if not customer_id.isnumeric():
-        print("Customer id must be numeric")
-        return False
-
-    if not system.customer_service.find_customer(int(customer_id)):
-        print(f"Customer not found")
-        return False
-    return True
 
 
 def customers_option(system: SystemPanel):
@@ -110,7 +116,7 @@ def customers_option(system: SystemPanel):
         if user_pick == "3":
             print_message(f"{prefix}Update")
             customer_id = input("Customer id you want to update: ").strip()
-            if not validate_and_find_customer(system, customer_id):
+            if not validate_id_value(customer_id):
                 continue
 
             print("Hint: Leave blank to skip updating a field")
@@ -126,12 +132,14 @@ def customers_option(system: SystemPanel):
                 phone=customer_phone,
                 identity=customer_identity,
             ):
-                print("Successfully updated")
+                print_message("Customer updated successfully")
+            else:
+                print_message(f"Customer with id: {customer_id} does not found")
 
         if user_pick == "4":
             customer_id = input("Customer id you want to remove: ").strip()
 
-            if not validate_and_find_customer(system, customer_id):
+            if not validate_id_value(customer_id):
                 continue
 
             confirmation = (
@@ -144,7 +152,9 @@ def customers_option(system: SystemPanel):
 
             if confirmation == "yes" or confirmation == "y":
                 if system.customer_service.remove_customer(int(customer_id)):
-                    print("Successfully removed")
+                    print_message("Customer updated successfully")
+                else:
+                    print_message(f"Customer with id: {customer_id} does not found")
 
         if user_pick == "0":
             system.customer_service.save_customers()
