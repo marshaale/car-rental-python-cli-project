@@ -5,7 +5,7 @@ from utils.utils import is_header_line
 
 class CustomerCarRentService:
     def __init__(self) -> None:
-        self.customer_car_rents: list[CustomerCarRent] = []
+        self.rent_cars: list[CustomerCarRent] = []
         self.file_header = (
             "id,car_id,customer_id,base_price,num_of_days,payment_type,status"
         )
@@ -13,7 +13,7 @@ class CustomerCarRentService:
 
     def load_rent_cars(self) -> list[CustomerCarRent]:
         try:
-            rent_cars: list[CustomerCarRent] = []
+            rent_cars = []
             with open(
                 CUSTOMER_CAR_RENTS_FILE_PATH, "r", encoding=self.encoding
             ) as file:
@@ -48,7 +48,7 @@ class CustomerCarRentService:
                             status=status,
                         )
                     )
-            self.customer_rent_cars = rent_cars
+            self.rent_cars = rent_cars
             return rent_cars
         except FileNotFoundError as e:
             print(str(e))
@@ -60,7 +60,7 @@ class CustomerCarRentService:
                 CUSTOMER_CAR_RENTS_FILE_PATH, "w", encoding=self.encoding
             ) as file:
                 file.write(self.file_header)
-                for car_rent in self.customer_car_rents:
+                for car_rent in self.rent_cars:
                     file.write(
                         f"\n{car_rent.id},{car_rent.car_id},{car_rent.customer_id},{car_rent.base_price},{car_rent.num_of_days},{car_rent.payment_type},{car_rent.status}"
                     )
@@ -80,7 +80,7 @@ class CustomerCarRentService:
     ) -> bool:
         try:
             customer = CustomerCarRent(
-                id=len(self.customer_car_rents) + 1,
+                id=len(self.rent_cars) + 1,
                 car_id=car_id,
                 customer_id=customer_id,
                 base_price=base_price,
@@ -88,7 +88,7 @@ class CustomerCarRentService:
                 payment_type=payment_type,
                 status="completed",
             )
-            self.customer_car_rents.append(customer)
+            self.rent_cars.append(customer)
             return True
         except Exception as e:
             print(str(e))
@@ -96,7 +96,7 @@ class CustomerCarRentService:
 
     def find_rent_car(self, customer_car_rent_id: int) -> CustomerCarRent | None:
         try:
-            for car_rent in self.customer_car_rents:
+            for car_rent in self.rent_cars:
                 if car_rent.id == customer_car_rent_id:
                     return car_rent
             return None
@@ -140,11 +140,15 @@ class CustomerCarRentService:
 
     def remove_rent_car(self, customer_car_rent_id: int) -> bool:
         try:
-            for index, value in enumerate(self.customer_car_rents):
+            for index, value in enumerate(self.rent_cars):
                 if value.id == customer_car_rent_id:
-                    del self.customer_car_rents[index]
+                    del self.rent_cars[index]
                     return True
             return False
         except Exception as e:
             print(str(e))
             return False
+
+    def list_rent_cars(self) -> None:
+        for rent in self.rent_cars:
+            print(rent)
