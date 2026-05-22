@@ -16,7 +16,7 @@ class CustomerService:
                 for line in file.readlines():
                     raw = line.strip("\n")
                     if not raw:
-                        print("empty line",raw)
+                        print("empty line", raw)
                         continue
                     print(
                         "Is Header Line",
@@ -68,7 +68,14 @@ class CustomerService:
             print(str(e))
             return None
 
-    def update_customer(self,*,customer_id:int, name: str|None = None, phone: str|None = None, identity: str|None = None)->bool:
+    def update_customer(
+        self,
+        *,
+        customer_id: int,
+        name: str | None = None,
+        phone: str | None = None,
+        identity: str | None = None,
+    ) -> bool:
         try:
             customer = self.find_customer(customer_id)
             if not customer:
@@ -91,3 +98,7 @@ class CustomerService:
         except Exception as e:
             print(str(e))
             return False
+
+    def list_customers(self) -> None:
+        for customer in self.customers:
+            print(customer)
