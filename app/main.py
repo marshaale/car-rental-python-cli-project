@@ -162,6 +162,23 @@ def customers_option(system: SystemPanel):
             break
 
 
+def rents_section(system: SystemPanel):
+    prefix = "Rents->"
+    while True:
+        print(f"\n{prefix}")
+        print("1 Add 2 List 3 Update 4 Remove 0 Exit")
+        user_pick = input("Pick: ")
+
+        if user_pick == "2":
+            print_message(f"{prefix}List")
+            system.car_rent_service.list_rent_cars()
+
+        if user_pick == "0":
+            system.car_rent_service.save_rent_cars()
+            print_message()
+            break
+
+
 def main():
     system = SystemPanel()
     while True:
@@ -174,12 +191,16 @@ def main():
             if user_pick == "2":
                 customers_option(system)
 
+            if user_pick == "3":
+                rents_section(system)
+
             if user_pick == "101":
                 system.save_state()
 
             if user_pick == "0":
                 print_message("Good bye")
                 break
+
         except Exception as e:
             print("System exception: ", str(e))
         finally:

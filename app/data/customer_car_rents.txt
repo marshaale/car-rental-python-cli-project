@@ -1,2 +1,0 @@
-id,car_id,customer_id,base_price,num_of_days,payment_type,status
-1,1,2,21,15,Pre Payment,return_due_to_issue
