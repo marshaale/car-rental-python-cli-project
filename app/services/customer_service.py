@@ -11,7 +11,7 @@ class CustomerService:
 
     def load_customers(self) -> list[Customer]:
         try:
-            customers: list[Customer] = []
+            customers = []
             with open(CUSTOMERS_FILE_PATH, "r", encoding=self.encoding) as file:
                 for line in file.readlines():
                     raw = line.strip("\n")
