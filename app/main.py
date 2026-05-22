@@ -8,6 +8,7 @@ def print_message(message: str = "---Back to System Panel---"):
 def cars_option(system: SystemPanel):
     prefix = "Cars->"
     while True:
+        print(f"\n{prefix}")
         print("1 Add 2 List 3 Update 4 Remove 0 Exit")
         user_pick = input("Pick: ").strip().lower()
         if user_pick == "1":
@@ -67,8 +68,20 @@ def cars_option(system: SystemPanel):
 def customers_option(system: SystemPanel):
     prefix = "Customers->"
     while True:
+        print(f"\n{prefix}")
         print("1 Add 2 List 3 Update 4 Remove 0 Exit")
         user_pick = input("Pick: ")
+
+        if user_pick == "1":
+            customer_name = input("Customer name: ")
+            customer_phone = input("Customer phone: ")
+            customer_identity = input("Customer identity eg (passport,national identity): ")
+
+            if not customer_name or not customer_phone or not customer_identity:
+                print_message("All fields are required")
+                continue
+            
+            system.customer_service.add_customer(name=customer_name,phone=customer_phone,identity=customer_identity)
 
         if user_pick == "2":
             print_message(f"{prefix}List")
