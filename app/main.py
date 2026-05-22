@@ -65,6 +65,21 @@ def cars_option(system: SystemPanel):
             break
 
 
+def validate_and_find_customer(system: SystemPanel, customer_id: str) -> bool:
+    if not customer_id:
+        print("Customer id is required")
+        return False
+
+    if not customer_id.isnumeric():
+        print("Customer id must be numeric")
+        return False
+
+    if not system.customer_service.find_customer(int(customer_id)):
+        print(f"Customer not found")
+        return False
+    return True
+
+
 def customers_option(system: SystemPanel):
     prefix = "Customers->"
     while True:
@@ -73,6 +88,7 @@ def customers_option(system: SystemPanel):
         user_pick = input("Pick: ")
 
         if user_pick == "1":
+            print_message(f"{prefix}Add")
             customer_name = input("Customer name: ")
             customer_phone = input("Customer phone: ")
             customer_identity = input(
@@ -91,19 +107,31 @@ def customers_option(system: SystemPanel):
             print_message(f"{prefix}List")
             system.customer_service.list_customers()
 
+        if user_pick == "3":
+            print_message(f"{prefix}Update")
+            customer_id = input("Customer id you want to update: ").strip()
+            if not validate_and_find_customer(system, customer_id):
+                continue
+
+            print("Hint: Leave blank to skip updating a field")
+            customer_name = input("Customer name: ")
+            customer_phone = input("Customer phone: ")
+            customer_identity = input(
+                "Customer identity eg (passport,national identity): "
+            )
+
+            if system.customer_service.update_customer(
+                customer_id=int(customer_id),
+                name=customer_name,
+                phone=customer_phone,
+                identity=customer_identity,
+            ):
+                print("Successfully updated")
+
         if user_pick == "4":
             customer_id = input("Customer id you want to remove: ").strip()
 
-            if not customer_id:
-                print("Customer id is required to remove")
-                continue
-
-            if not customer_id.isnumeric():
-                print("Customer id must be numeric")
-                continue
-
-            if not system.customer_service.find_customer(int(customer_id)):
-                print(f"Customer not found")
+            if not validate_and_find_customer(system, customer_id):
                 continue
 
             confirmation = (
@@ -113,9 +141,10 @@ def customers_option(system: SystemPanel):
                 .strip()
                 .lower()
             )
+
             if confirmation == "yes" or confirmation == "y":
-                system.customer_service.remove_customer(int(customer_id))
-                print("Successfully removed")
+                if system.customer_service.remove_customer(int(customer_id)):
+                    print("Successfully removed")
 
         if user_pick == "0":
             system.customer_service.save_customers()
