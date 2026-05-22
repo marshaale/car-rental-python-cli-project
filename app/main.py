@@ -75,17 +75,47 @@ def customers_option(system: SystemPanel):
         if user_pick == "1":
             customer_name = input("Customer name: ")
             customer_phone = input("Customer phone: ")
-            customer_identity = input("Customer identity eg (passport,national identity): ")
+            customer_identity = input(
+                "Customer identity eg (passport,national identity): "
+            )
 
             if not customer_name or not customer_phone or not customer_identity:
                 print_message("All fields are required")
                 continue
-            
-            system.customer_service.add_customer(name=customer_name,phone=customer_phone,identity=customer_identity)
+
+            system.customer_service.add_customer(
+                name=customer_name, phone=customer_phone, identity=customer_identity
+            )
 
         if user_pick == "2":
             print_message(f"{prefix}List")
             system.customer_service.list_customers()
+
+        if user_pick == "4":
+            customer_id = input("Customer id you want to remove: ").strip()
+
+            if not customer_id:
+                print("Customer id is required to remove")
+                continue
+
+            if not customer_id.isnumeric():
+                print("Customer id must be numeric")
+                continue
+
+            if not system.customer_service.find_customer(int(customer_id)):
+                print(f"Customer not found")
+                continue
+
+            confirmation = (
+                input(
+                    f"Are you sure you want to remove customer id {customer_id} y/n: "
+                )
+                .strip()
+                .lower()
+            )
+            if confirmation == "yes" or confirmation == "y":
+                system.customer_service.remove_customer(int(customer_id))
+                print("Successfully removed")
 
         if user_pick == "0":
             system.customer_service.save_customers()

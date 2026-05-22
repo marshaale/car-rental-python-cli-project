@@ -1,3 +1,2 @@
 id,name,phone,identity
-2,Ahmed,760284,Document
 2,Hasna,89103110,passport
