@@ -231,7 +231,7 @@ def main():
     system = SystemPanel()
     while True:
         try:
-            print("1 Cars 2 Customers 3 Rents 101: Save 0 Exit")
+            print("1: Cars 2: Customers 3: Rents 4: Report 101: Save 0: Exit")
             user_pick = input("Pick: ").strip().lower()
             if user_pick == "1":
                 cars_option(system)
@@ -241,6 +241,10 @@ def main():
 
             if user_pick == "3":
                 rents_section(system)
+
+            if user_pick == "4":
+                print("----Reports----")
+                print(system.reports())
 
             if user_pick == "101":
                 system.save_state()

@@ -15,3 +15,8 @@ class SystemPanel:
         self.car_service.save_cars()
         self.customer_service.save_customers()
         self.car_rent_service.save_rent_cars()
+
+    def reports(self)->str:
+        available_cars = [ car for car in self.car_service.cars if not car.is_rented ]
+        return f"Cars: {len(self.car_service.cars)}\nCustomers: {len(self.customer_service.customers)}\nAll time rents: {len(self.car_rent_service.rent_cars)}\nAvailable cars: {len(available_cars)}\n"
+
