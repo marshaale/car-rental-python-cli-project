@@ -4,4 +4,7 @@ def is_header_line(*, line: str, lookup: str) -> bool:
     return False
 
 def convert_str_to_bool(value:str)->bool:
-    return value.strip().lower == "true"
+    if value.strip().lower() == "true":
+        return True
+    else:
+        return False
