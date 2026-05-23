@@ -1,6 +1,8 @@
 from model.customer_car_rent import CustomerCarRent
 from core.config import CUSTOMER_CAR_RENTS_FILE_PATH
 from utils.utils import is_header_line
+from services.customer_service import CustomerService
+from services.car_service import CarService
 
 
 class CustomerCarRentService:
@@ -32,8 +34,8 @@ class CustomerCarRentService:
                         id,
                         car_id,
                         customer_id,
-                        num_of_days,
                         base_price,
+                        num_of_days,
                         payment_type,
                         status,
                     ] = raw.split(",")
@@ -149,6 +151,8 @@ class CustomerCarRentService:
             print(str(e))
             return False
 
-    def list_rent_cars(self) -> None:
+    def list_rent_cars(
+        self, car_service: CarService, customer_service: CustomerService
+    ) -> None:
         for rent in self.rent_cars:
-            print(rent)
+            print(rent.display(car_service, customer_service))
