@@ -9,7 +9,7 @@ def convert_str_to_bool(value: str) -> bool:
         return True
     else:
         return False
-    
+
 
 def print_message(message: str = "---Back to System Panel---"):
     print(message, "\n")

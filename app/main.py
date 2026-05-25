@@ -1,20 +1,5 @@
 from model.system_panel import SystemPanel
-
-
-def print_message(message: str = "---Back to System Panel---"):
-    print(message, "\n")
-
-
-def validate_id_value(id_value: str, prefix: str = "Customer") -> bool:
-    if not id_value:
-        print(f"{prefix} id is required")
-        return False
-
-    if not id_value.isnumeric():
-        print(f"{prefix} id must be numeric")
-        return False
-
-    return True
+from utils.utils import print_message, validate_id_value
 
 
 def cars_option(system: SystemPanel):
@@ -95,7 +80,7 @@ def customers_option(system: SystemPanel):
         user_pick = input("Pick: ")
 
         if user_pick == "1":
-            print_message(f"{prefix}Add")
+            print_message(f"----{prefix}Add----")
             customer_name = input("Customer name: ")
             customer_phone = input("Customer phone: ")
             customer_identity = input(
@@ -111,11 +96,11 @@ def customers_option(system: SystemPanel):
             )
 
         if user_pick == "2":
-            print_message(f"{prefix}List")
+            print_message(f"----{prefix}List----")
             system.customer_service.list_customers()
 
         if user_pick == "3":
-            print_message(f"{prefix}Update")
+            print_message(f"----{prefix}Update----")
             customer_id = input("Customer id you want to update: ").strip()
             if not validate_id_value(customer_id):
                 continue
@@ -138,6 +123,7 @@ def customers_option(system: SystemPanel):
                 print_message(f"Customer with id: {customer_id} does not found")
 
         if user_pick == "4":
+            print_message(f"----{prefix}Remove----")
             customer_id = input("Customer id you want to remove: ").strip()
 
             if not validate_id_value(customer_id):
@@ -171,6 +157,7 @@ def rents_section(system: SystemPanel):
         user_pick = input("Pick: ")
 
         if user_pick == "1":
+            print_message(f"----{prefix}Add----")
             car_id = input("Car id: ").strip()
             customer_id = input("Customer id: ").strip()
             num_of_days = input("Number of days: ").strip()
@@ -219,12 +206,14 @@ def rents_section(system: SystemPanel):
                 print("\nFailed to register")
 
         if user_pick == "2":
-            print_message(f"{prefix}List")
+            print_message(f"----{prefix}List----")
             system.car_rent_service.list_rent_cars(
                 system.car_service, system.customer_service
             )
 
         if user_pick == "3":
+            print_message(f"----{prefix}Update----")
+            # Rent validation
             rent_id = input("Rent id: ").strip()
             if not validate_id_value(rent_id, "Rent"):
                 continue
@@ -235,8 +224,8 @@ def rents_section(system: SystemPanel):
                 print(f"Rent record with id: {rent_id} not found")
                 continue
 
+            # Input fields
             print("Hint: Leave blank to skip updating a field")
-
             car_id = input("Car id: ").strip()
             customer_id = input("Customer id: ").strip()
             num_of_days = input("Number of days: ").strip()
@@ -249,6 +238,18 @@ def rents_section(system: SystemPanel):
                 .lower()
             )
 
+            # Status validation
+            if status and not status in [
+                "canceled",
+                "return_due_to_issue",
+                "completed",
+            ]:
+                print(
+                    "Status must be either ['canceled','return_due_to_issue','completed']"
+                )
+                continue
+
+            # Id validation
             if (
                 car_id
                 and not validate_id_value(car_id, "Car")
@@ -261,29 +262,37 @@ def rents_section(system: SystemPanel):
 
             print("Here after validate_id_value")
 
+            # payment type correction
             if payment_type and not payment_type in ["pre payment", "post payment"]:
                 payment_type = "pre payment"
 
+            # num_of_days validation
             if num_of_days and not num_of_days.isnumeric():
                 print("Number of days must be numeric")
                 continue
 
+            # conditional find customer based on customer_id
             customer = (
                 system.customer_service.find_customer(int(customer_id))
                 if customer_id
                 else None
             )
+
+            # check
             if customer_id and not customer:
                 print(f"Customer with id: {customer_id} not found")
                 continue
 
+            # conditional find car based car_id
             car = system.car_service.find_car(int(car_id)) if car_id else None
 
+            # check
             if car_id and not car:
                 print(f"Car with id: {car_id} not found")
                 continue
 
-            if car and car.id != rent_car.id and car.is_rented:
+            # check if selected car is a new car and if is already rented.
+            if car and car.id != rent_car.car_id and car.is_rented:
                 print(f"Car with id: {car_id} is already rented")
                 continue
 
@@ -291,6 +300,11 @@ def rents_section(system: SystemPanel):
 
             print("Status", status)
 
+            # update old car availability
+            if car and car.id != rent_car.car_id:
+                old_car = rent_car.car_id
+                system.car_service.update_car(car_id=old_car, is_rented=False)
+            
             if system.car_rent_service.update_rent_car(
                 customer_car_rent_id=int(rent_id),
                 car_id=int(car_id) if car_id else None,
@@ -304,16 +318,20 @@ def rents_section(system: SystemPanel):
                 print("Here update car")
                 print("Is canceled", is_rented)
                 print(False if is_rented else True)
+
+                car_id_pram = int(car_id) if car_id else rent_car.car_id
+
                 if system.car_service.update_car(
-                    car_id=int(car_id) if car_id else rent_car.car_id,
+                    car_id=car_id_pram,
                     is_rented=is_rented,
-                    year="2026",
                 ):
                     print("Updated successfully")
                     system.car_rent_service.save_rent_cars()
-                    if system.car_service.save_cars():
-                        print("Car updated")
-                        print(system.car_service.cars)
+                    system.car_service.save_cars()
+                else:
+                    print(
+                        f"Failed to update car: update manually car with id: {car_id_pram} "
+                    )
 
             else:
                 print("Failed to update rent car")
