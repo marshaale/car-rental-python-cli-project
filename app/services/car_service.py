@@ -93,7 +93,7 @@ class CarService:
         model: str | None = None,
         year: str | None = None,
         price_per_day: float | None = None,
-        is_rented: bool | None = None,
+        is_rented: bool,
     ) -> bool:
         try:
             car = self.find_car(car_id)
@@ -105,7 +105,7 @@ class CarService:
             car.price_per_day = (
                 car.price_per_day if not price_per_day else float(price_per_day)
             )
-            car.is_rented = car.is_rented if not is_rented else is_rented
+            car.is_rented = is_rented
             return True
         except Exception as e:
             print(str(e))
