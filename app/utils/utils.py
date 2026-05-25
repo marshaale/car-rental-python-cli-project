@@ -9,3 +9,19 @@ def convert_str_to_bool(value: str) -> bool:
         return True
     else:
         return False
+    
+
+def print_message(message: str = "---Back to System Panel---"):
+    print(message, "\n")
+
+
+def validate_id_value(id_value: str, prefix: str = "Customer") -> bool:
+    if not id_value:
+        print(f"{prefix} id is required")
+        return False
+
+    if not id_value.isnumeric():
+        print(f"{prefix} id must be numeric")
+        return False
+
+    return True
