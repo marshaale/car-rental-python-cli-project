@@ -289,7 +289,7 @@ def rents_section(system: SystemPanel):
 
             print("Here starts updating..")
 
-            print("Status",status)
+            print("Status", status)
 
             if system.car_rent_service.update_rent_car(
                 customer_car_rent_id=int(rent_id),
