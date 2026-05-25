@@ -63,6 +63,7 @@ def cars_option(system: SystemPanel):
                 price_per_day=(
                     None if not car_price_per_day else float(car_price_per_day)
                 ),
+                is_rented=False,
             ):
                 print_message("Car updated successfully")
             else:
@@ -173,7 +174,9 @@ def rents_section(system: SystemPanel):
             car_id = input("Car id: ").strip()
             customer_id = input("Customer id: ").strip()
             num_of_days = input("Number of days: ").strip()
-            payment_type = input("Payment type (pre payment,post payment): ").strip()
+            payment_type = (
+                input("Payment type (pre payment,post payment): ").strip().lower()
+            )
 
             if (
                 not validate_id_value(car_id, "Car")
@@ -220,6 +223,100 @@ def rents_section(system: SystemPanel):
             system.car_rent_service.list_rent_cars(
                 system.car_service, system.customer_service
             )
+
+        if user_pick == "3":
+            rent_id = input("Rent id: ").strip()
+            if not validate_id_value(rent_id, "Rent"):
+                continue
+
+            rent_car = system.car_rent_service.find_rent_car(int(rent_id))
+
+            if not rent_car:
+                print(f"Rent record with id: {rent_id} not found")
+                continue
+
+            print("Hint: Leave blank to skip updating a field")
+
+            car_id = input("Car id: ").strip()
+            customer_id = input("Customer id: ").strip()
+            num_of_days = input("Number of days: ").strip()
+            payment_type = (
+                input("Payment type (pre payment,post payment): ").strip().lower()
+            )
+            status = (
+                input("Status Keep empty unless canceled or return_due_to_issue: ")
+                .strip()
+                .lower()
+            )
+
+            if (
+                car_id
+                and not validate_id_value(car_id, "Car")
+                or customer_id
+                and not validate_id_value(customer_id)
+            ):
+                continue
+
+            print("Car id", car_id, "Customer id", customer_id)
+
+            print("Here after validate_id_value")
+
+            if payment_type and not payment_type in ["pre payment", "post payment"]:
+                payment_type = "pre payment"
+
+            if num_of_days and not num_of_days.isnumeric():
+                print("Number of days must be numeric")
+                continue
+
+            customer = (
+                system.customer_service.find_customer(int(customer_id))
+                if customer_id
+                else None
+            )
+            if customer_id and not customer:
+                print(f"Customer with id: {customer_id} not found")
+                continue
+
+            car = system.car_service.find_car(int(car_id)) if car_id else None
+
+            if car_id and not car:
+                print(f"Car with id: {car_id} not found")
+                continue
+
+            if car and car.id != rent_car.id and car.is_rented:
+                print(f"Car with id: {car_id} is already rented")
+                continue
+
+            print("Here starts updating..")
+
+            print("Status",status)
+
+            if system.car_rent_service.update_rent_car(
+                customer_car_rent_id=int(rent_id),
+                car_id=int(car_id) if car_id else None,
+                customer_id=int(customer_id) if customer_id else None,
+                num_of_days=int(num_of_days) if num_of_days else None,
+                base_price=float(car.price_per_day) if car else None,
+                payment_type=payment_type,
+                status=status,
+            ):
+                is_rented = False if status in ["canceled"] else True
+                print("Here update car")
+                print("Is canceled", is_rented)
+                print(False if is_rented else True)
+                if system.car_service.update_car(
+                    car_id=int(car_id) if car_id else rent_car.car_id,
+                    is_rented=is_rented,
+                    year="2026",
+                ):
+                    print("Updated successfully")
+                    system.car_rent_service.save_rent_cars()
+                    if system.car_service.save_cars():
+                        print("Car updated")
+                        print(system.car_service.cars)
+
+            else:
+                print("Failed to update rent car")
 
         if user_pick == "0":
             system.car_rent_service.save_rent_cars()
